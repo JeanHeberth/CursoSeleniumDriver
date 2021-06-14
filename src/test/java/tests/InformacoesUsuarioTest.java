@@ -1,11 +1,16 @@
 package tests;
 
 
+import org.easetech.easytest.annotation.DataLoader;
+import org.easetech.easytest.annotation.Param;
+import org.easetech.easytest.runner.DataDrivenTestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,11 +20,15 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import suporte.Generator;
 import suporte.Screenshot;
+import suporte.Web;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
+
+@RunWith(DataDrivenTestRunner.class)
+@DataLoader(filePaths = {})
 public class InformacoesUsuarioTest {
 
     private WebDriver navegador;
@@ -30,18 +39,8 @@ public class InformacoesUsuarioTest {
 
     @Before
     public void setUp() {
-        //Abrindo o navegador
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\jean.vieira\\Documents\\DesenvolvimentoIntellij\\DriversTeste\\chromedriver.exe");
-        navegador = new ChromeDriver();
-        navegador.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
-        // Caso desejar maximar a tela do chrome usar o comando a baixo.
-        navegador.manage().window().maximize();
-        // Caso for MAc
-        // navegador.manage().window().setSize(new Dimension(1280, 800));
-
-        // Navegando para a página do teste
-        navegador.get("http://www.juliodelima.com.br/taskit");
+        navegador = Web.createChrome();
 
         // Clicar no link que possui o texto sign in
         // Primeira abordagem de clicar no Sign in
@@ -70,8 +69,8 @@ public class InformacoesUsuarioTest {
     }
 
 
-    // @Test
-    public void testAdicionarUmaInformacaoAdicionalDoUsuario() {
+    @Test
+    public void testAdicionarUmaInformacaoAdicionalDoUsuario(@Param(name = "tipo") String tipo, @Param(name = "contato") String contato, @Param(name = "mensagem") String mensagemEsperada) {
 
 
         // Clicar no botão através do seu xpath //button[@data-target="addmoredata"]
@@ -82,11 +81,11 @@ public class InformacoesUsuarioTest {
 
         // Na combo de name Type escolher a opção "Phone"
         WebElement campoType = poupAddMoreData.findElement(By.name("type"));
-        new Select(campoType).selectByVisibleText("Phone");
+        new Select(campoType).selectByVisibleText(tipo);
 
 
         // No campo de name "contact" colocar o telefone
-        poupAddMoreData.findElement(By.name("contact")).sendKeys("+556100000000");
+        poupAddMoreData.findElement(By.name("contact")).sendKeys(contato);
 
         // Clicar no link de text "save" que está na poup
         poupAddMoreData.findElement(By.linkText("SAVE")).click();
@@ -94,7 +93,7 @@ public class InformacoesUsuarioTest {
         // Na mensagem de id "toast-container" validar se  o texto é: "Your contact has been added!"
         WebElement mensagemPop = navegador.findElement(By.id("toast-container"));
         String mensagem = mensagemPop.getText();
-        assertEquals("Your contact has been added!", mensagem);
+        assertEquals(mensagemEsperada, mensagem);
     }
 
     @Test
@@ -126,7 +125,8 @@ public class InformacoesUsuarioTest {
     @After
     public void tearDown() {
 
-        // Fechar o navegador        navegador.quit();
+        //Fechar o navegador
+        // navegador.quit();
     }
 
 
