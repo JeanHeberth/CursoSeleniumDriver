@@ -19,10 +19,12 @@ public class InformacoesUsuarioPageObjectsTest {
     @Test
     public void testAdicionarUmaInformacaoAdicionalDoUsuario() {
         new LoginPage(navegador)
-                . clicarSignIn()
+                .clicarSignIn()
                 .fazerLogin("JeanHeberth", "JeanHeberth")
-                .clicarMe();
-
+                .clicarMe()
+                .clicarAbaMoreDataAboutYou()
+                .clicarBotaoAddMoreDataAboutYou();
+                ;
 
 
     }
@@ -30,6 +32,6 @@ public class InformacoesUsuarioPageObjectsTest {
 
     @After
     public void tearDown() {
-       // navegador.quit();
+        // navegador.quit();
     }
 }
